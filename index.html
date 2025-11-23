@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>MentalEase - Prototipo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --blue: #005c99;
+      --blue-dark: #004070;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --gray: #555;
+      --light-gray: #e5e7eb;
+      --accent: #ffb347;
+      --radius: 16px;
+      --shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: var(--bg);
+      display: flex;
+      justify-content: center;
+    }
+
+    #app {
+      width: 430px;
+      max-width: 100%;
+      min-height: 100vh;
+      background: #fff;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screen {
+      display: none;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    .header {
+      position: relative;
+      background: var(--blue);
+      color: #fff;
+      padding: 24px 20px 80px;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: "";
+      position: absolute;
+      inset: -40px;
+      background: radial-gradient(circle at top left, #2aa0ff, var(--blue));
+      opacity: 0.45;
+    }
+
+    .header-inner {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1;
+    }
+
+    .logo-text {
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: #ffe0f0;
+      border: 2px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--blue-dark);
+    }
+
+    .header-title {
+      position: relative;
+      z-index: 1;
+      margin-top: 16px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .back-link {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 2;
+      cursor: pointer;
+      font-size: 14px;
+      display: none;
+    }
+
+    .header.with-back .back-link {
+      display: block;
+    }
+
+    main {
+      padding: 0 20px 20px;
+      margin-top: -40px;
+      z-index: 2;
+      position: relative;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin: 0 0 8px;
+      color: var(--blue-dark);
+    }
+
+    h2 {
+      font-size: 18px;
+      margin: 0 0 8px;
+      color: var(--blue-dark);
+    }
+
+    p {
+      margin: 4px 0;
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: none;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      text-decoration: none;
+    }
+
+    .btn.full {
+      width: 100%;
+      border-radius: 12px;
+    }
+
+    .btn.secondary {
+      background: #fff;
+      color: var(--blue-dark);
+      border: 1px solid var(--blue-dark);
+      box-shadow: none;
+    }
+
+    .btn.small {
+      padding: 8px 14px;
+      font-size: 13px;
+      border-radius: 999px;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 12px;
+    }
+
+    label {
+      font-size: 13px;
+      margin-bottom: 4px;
+      color: var(--gray);
+    }
+
+    input,
+    select {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--light-gray);
+      font-size: 14px;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--blue);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .chip {
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #edf2ff;
+      font-size: 12px;
+      color: var(--blue-dark);
+    }
+
+    .chip.soft-green {
+      background: #e2fbe8;
+    }
+
+    .chip.soft-yellow {
+      background: #fff7d1;
+    }
+
+    .chip.soft-red {
+      background: #ffe4e6;
+    }
+
+    .mood-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f3f4f6;
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .mood-date {
+      background: #fff;
+      padding: 6px 10px;
+      border-radius: 999px;
+      margin-right: 8px;
+      font-weight: 500;
+    }
+
+    .mood-main {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mood-emoji {
+      font-size: 20px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0 0 8px;
+      color: var(--blue-dark);
+    }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .group-card {
+      border-radius: 16px;
+      background: #f9fafb;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .group-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .group-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--blue-dark);
+    }
+
+    .group-info {
+      font-size: 12px;
+      color: var(--gray);
+    }
+
+    .group-members {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px;
+      font-size: 12px;
+    }
+
+    .badge-member {
+      background: #e0f2fe;
+      border-radius: 999px;
+      padding: 4px 8px;
+    }
+
+    .rec-card {
+      border-radius: 16px;
+      background: #f9fafb;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .rec-chip {
+      align-self: flex-start;
+      padding: 4px 10px;
+      font-size: 11px;
+      border-radius: 999px;
+      background: #dbeafe;
+      color: var(--blue-dark);
+      font-weight: 600;
+    }
+
+    .rec-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--blue-dark);
+    }
+
+    .rec-text {
+      font-size: 13px;
+      color: var(--gray);
+    }
+
+    .footer-space {
+      height: 16px;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      #app {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- HOME / OPCIONES / AUTENTICACIÓN -->
+    <div id="screen-home" class="screen active">
+      <div class="header">
+        <div class="header-inner">
+          <div class="logo-text">Mental Ease</div>
+        </div>
+        <div class="header-title">
+          Cuidar tu salud mental es el primer paso hacia una vida más equilibrada.
+        </div>
+      </div>
+      <main>
+        <div class="card">
+          <h1>Bienvenido</h1>
+          <p>Este es el prototipo funcional de MentalEase.</p>
+          <div style="margin-top: 12px;">
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;">
+              <input type="checkbox" id="cb-tyc" />
+              Acepto términos y condiciones
+            </label>
+          </div>
+          <button id="btn-comenzar" class="btn full" style="margin-top:16px;" disabled>
+            Comenzar
+          </button>
+        </div>
+      </main>
+    </div>
+
+    <div id="screen-options" class="screen">
+      <div class="header">
+        <div class="header-inner">
+          <div class="logo-text">Mental Ease</div>
+        </div>
+        <div class="header-title">
+          Elige cómo deseas continuar.
+        </div>
+      </div>
+      <main>
+        <div class="card">
+          <h1>Opciones</h1>
+          <p>Si ya tienes una cuenta, inicia sesión. De lo contrario, crea tu perfil.</p>
+          <button id="btn-go-signup" class="btn full" style="margin-top:12px;">Crear perfil</button>
+          <button id="btn-go-login" class="btn full secondary" style="margin-top:8px;">
+            Iniciar sesión
+          </button>
+        </div>
+      </main>
+    </div>
+
+    <div id="screen-signup" class="screen">
+      <div class="header with-back">
+        <span class="back-link" data-back="options">← Volver</span>
+        <div class="header-inner">
+          <div class="logo-text">Mental Ease</div>
+        </div>
+        <div class="header-title">Crea tu perfil</div>
+      </div>
+      <main>
+        <div class="card">
+          <h1>Crear perfil</h1>
+          <div class="input-group">
+            <label>Nombre completo</label>
+            <input id="su-name" type="text" />
+          </div>
+          <div class="input-group">
+            <label>Correo electrónico</label>
+            <input id="su-email" type="email" />
+          </div>
+          <div class="input-group">
+            <label>Género</label>
+            <select id="su-gender">
+              <option value="">Seleccionar…</option>
+              <option value="Femenino">Femenino</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Edad</label>
+            <input id="su-age" type="number" min="10" max="100" />
+          </div>
+          <div class="input-group">
+            <label>Contraseña</label>
+            <input id="su-password" type="password" />
+          </div>
+          <button id="btn-signup" class="btn full" style="margin-top:8px;">Crear perfil</button>
+          <p id="su-msg" class="center" style="margin-top:8px;font-size:13px;"></p>
+        </div>
+      </main>
+    </div>
+
+    <div id="screen-login" class="screen">
+      <div class="header with-back">
+        <span class="back-link" data-back="options">← Volver</span>
+        <div class="header-inner">
+          <div class="logo-text">Mental Ease</div>
+        </div>
+        <div class="header-title">Inicia sesión</div>
+      </div>
+      <main>
+        <div class="card">
+          <h1>Iniciar sesión</h1>
+          <div class="input-group">
+            <label>Correo electrónico</label>
+            <input id="li-email" type="email" />
+          </div>
+          <div class="input-group">
+            <label>Contraseña</label>
+            <input id="li-password" type="password" />
+          </div>
+          <button id="btn-login" class="btn full" style="margin-top:8px;">Entrar</button>
+          <p id="li-msg" class="center" style="margin-top:8px;font-size:13px;"></p>
+        </div>
+      </main>
+    </div>
+
+    <!-- PERFIL -->
+    <div id="screen-profile" class="screen">
+      <div class="header">
+        <div class="header-inner">
+          <div class="logo-text">Mental Ease</div>
+          <div class="avatar" id="avatar-initials">ME</div>
+        </div>
+        <div class="header-title" id="profile-header-text">
+          Hola,
+        </div>
+      </div>
+      <main>
+        <div class="card">
+          <h1 id="profile-name">Nombre usuario</h1>
+          <p id="profile-email">correo@example.com</p>
+          <p id="profile-meta">Género — Edad</p>
+
+          <div class="stack" style="margin-top:16px;">
+            <button class="btn full" id="btn-go-mood-log">Registro emocional</button>
+            <button class="btn full" id="btn-go-mood-history">Monitoreo estado emocional</button>
+            <button class="btn full" id="btn-go-library">Biblioteca educativa</button>
+            <button class="btn full" id="btn-go-community">Comunidad de apoyo</button>
+            <button class="btn full" id="btn-go-recommendations">Recomendaciones personalizadas</button>
+            <button class="btn full" id="btn-go-appointment">Agendar cita</button>
+          </div>
+
+          <button class="btn full secondary" id="btn-logout" style="margin-top:16px;">
+            Cerrar sesión
+          </button>
+        </div>
+      </main>
+    </div>
+
+    <!-- REGISTRO EMOCIONAL -->
+    <div id="screen-mood-log" class="screen">
+      <div class="header with-back">
+        <span class="back-link" data-back="profile">← Volver</span>
+        <div class="header-inner">
+          <div class="logo-text">Mental Ease</div>
+          <div class="avatar" id="avatar-ml">ME</div>
+        </div>
+        <div class="header-title">¿Cómo te sientes hoy?</div>
+      </div>
+      <main>
+        <div class="card">
+          <h1>Registro emocional</h1>
+          <p>Selecciona el estado que más se acerca a cómo te sientes hoy.</p>
+          <div class="chips" style="margin-top:8px;">
+            <button class="btn small secondary" data-mood="Muy bien">😊 Muy bien</button>
+            <button class="btn small secondary" data-mood="Bien">🙂 Bien</button>
+            <button class="btn small secondary" data-mood="Regular">😐 Regular</button>
+            <button class="btn small secondary" data-mood="Triste">😔 Triste</button>
+            <button class="btn small secondary" data-mood="Ansioso">😰 Ansioso</button>
+          </div>
+          <p id="mood-selected" style="margin-top:8px;font-size:14px;">
+            Estado seleccionado: <strong>Ninguno</strong>
+          </p>
+          <button id="btn-save-mood" class="btn full" style="margin-top:8px;">Guardar</button>
+          <p id="mood-msg" class="center" style="margin-top:8px;font-size:13px;"></p>
+        </div>
+      </main>
+    </div>
+
+    <!-- MONITOREO -->
+    <div id="screen-mood-history" class="screen">
+      <div class="header with-back">
+        <span class="back-link" data-back="profile">← Volver</span>
+        <div class="header-inner">
+          <div class="logo-text">Mental Ease</div>
+          <div class="avatar" id="avatar-mh">ME</div>
+        </div>
+        <div class="header-title">Tu historial emocional</div>
+      </div>
+      <main>
+        <div class="card">
+          <h1>Monitoreo estado emocional</h1>
+          <div id="mood-list"></div>
+          <p id="mood-empty" style="font-size:13px;color:var(--gray);">
+            Aún no has registrado estados emocionales.
+          </p>
+        </div>
+      </main>
+    </div>
+
+    <!-- BIBLIOTECA -->
+    <div id="screen-library" class="screen">
+      <div class="header with-back">
+        <span class="back-link" data-back="profile">← Volver</span>
+        <div class="header-inner">
+          <div class="logo-text">Mental Ease</div>
+          <div class="avatar" id="avatar-lib">ME</div>
+        </div>
+        <div class="header-title">Explora recursos</div>
+      </div>
+      <main>
+        <div class="card">
+          <h1>Biblioteca educativa</h1>
+          <div class="chips" style="margin:8px 0 12px;">
+            <span class="chip">Ansiedad</span>
+            <span class="chip soft-red">Estrés</span>
+            <span class="chip soft-green">Auto</span>
+          </div>
+          <div class="group-card">
+            <div class="group-header">
+              <div class="group-title">Cómo manejar la ansiedad</div>
+              <span class="chip soft-green" style="font-size:11px;">Artículo</span>
+            </div>
+            <p class="group-info">
+              Estrategias prácticas para reconocer y manejar la ansiedad.
+            </p>
+          </div>
+
+          <div class="group-card">
+            <div class="group-header">
+              <div class="group-title">Uso de la meditación</div>
+              <span class="chip soft-yellow" style="font-size:11px;">Video</span>
+            </div>
+            <p class="group-info">
+              Video corto para aprender una meditación básica en 5 minutos.
+            </p>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- COMUNIDAD -->
+    <div id="screen-community" class="screen">
+      <div class="header with-back">
+        <span class="back-link" data-back="profile">← Volver</span>
+        <div class="header-inner">
+          <div class="logo-text">Mental Ease</div>
+          <div class="avatar" id="avatar-com">ME</div>
+        </div>
+        <div class="header-title">Conecta con otros</div>
+      </div>
+      <main>
+        <div class="card">
+          <h1>Comunidad de apoyo</h1>
+          <div class="chips" style="margin:8px 0 12px;">
+            <span class="chip soft-red">Ansiedad</span>
+            <span class="chip soft-yellow">Estrés</span>
+            <span class="chip soft-green">Estado de ánimo</span>
+            <span class="chip">Autoestima</span>
+            <span class="chip">Ver todo</span>
+          </div>
+
+          <div class="stack">
+            <div class="group-card">
+              <div class="group-header">
+                <div>
+                  <div class="group-title">Grupo: Manejo de la ansiedad</div>
+                  <div class="group-info">120 miembros · Activo hoy</div>
+                </div>
+                <button class="btn small secondary">Entrar</button>
+              </div>
+              <p class="group-info">
+                Comparte experiencias y estrategias para manejar la ansiedad.
+              </p>
+              <div class="group-members">
+                <span class="badge-member">Ana</span>
+                <span class="badge-member">Luis</span>
+                <span class="badge-member">+18</span>
+              </div>
+            </div>
+
+            <div class="group-card">
+              <div class="group-header">
+                <div>
+                  <div class="group-title">Jóvenes y estrés académico</div>
+                  <div class="group-info">56 miembros · Nuevos mensajes</div>
+                </div>
+                <button class="btn small secondary">Entrar</button>
+              </div>
+              <p class="group-info">
+                Espacio para hablar sobre estudios, trabajo y presión académica.
+              </p>
+            </div>
+
+            <div class="group-card">
+              <div class="group-header">
+                <div>
+                  <div class="group-title">Cuidadores y familia</div>
+                  <div class="group-info">
+                    32 miembros · Reunión virtual los jueves
+                  </div>
+                </div>
+                <button class="btn small secondary">Entrar</button>
+              </div>
+              <p class="group-info">
+                Apoyo emocional para quienes acompañan a otras personas.
+              </p>
+            </div>
+          </div>
+
+          <button class="btn full" style="margin-top:16px;">Crear publicación</button>
+        </div>
+      </main>
+    </div>
+
+    <!-- RECOMENDACIONES PERSONALIZADAS -->
+    <div id="screen-recommendations" class="screen">
+      <div class="header with-back">
+        <span class="back-link" data-back="profile">← Volver</span>
+        <div class="header-inner">
+          <div class="logo-text">Mental Ease</div>
+          <div class="avatar" id="avatar-rec">ME</div>
+        </div>
+        <div class="header-title">Para ti</div>
+      </div>
+      <main>
+        <div class="card">
+          <h1>Recomendaciones personalizadas</h1>
+
+          <div class="mood-row" id="rec-current-mood">
+            <div class="mood-main">
+              <span class="mood-date">Hoy</span>
+              <span id="rec-mood-text">Me siento regular</span>
+            </div>
+            <span class="mood-emoji" id="rec-mood-emoji">😐</span>
+          </div>
+
+          <div class="stack" style="margin-top:12px;">
+            <div class="rec-card">
+              <span class="rec-chip">EJERCICIO</span>
+              <div class="rec-title">
+                Ejercicio de respiración de 5 minutos
+              </div>
+              <div class="rec-text">
+                Ideal para cuando te sientes regular o con algo de tensión.
+              </div>
+            </div>
+
+            <div class="rec-card">
+              <span class="rec-chip" style="background:#bbf7d0;">ARTÍCULO</span>
+              <div class="rec-title">
+                Cómo manejar el estrés del día a día
+              </div>
+              <div class="rec-text">
+                Lectura breve con estrategias prácticas de manejo del estrés.
+              </div>
+            </div>
+
+            <div class="rec-card">
+              <span class="rec-chip" style="background:#fee2e2;">AUTOCUIDADO</span>
+              <div class="rec-title">
+                3 acciones para cuidarte hoy
+              </div>
+              <div class="rec-text">
+                Pausas activas, hablar con alguien de confianza y descanso digital.
+              </div>
+            </div>
+
+            <div class="rec-card">
+              <span class="rec-chip" style="background:#fef3c7;">CITA PROFESIONAL</span>
+              <div class="rec-title">
+                Considera agendar una cita
+              </div>
+              <div class="rec-text">
+                Si estos estados se repiten con frecuencia, hablar con un profesional
+                puede ayudarte.
+              </div>
+              <div style="margin-top:6px;">
+                <button class="btn small">Agendar cita</button>
+              </div>
+            </div>
+          </div>
+
+          <button id="btn-rec-library" class="btn full" style="margin-top:16px;">
+            Ver más en la biblioteca
+          </button>
+        </div>
+      </main>
+    </div>
+
+    <!-- AGENDAR CITA -->
+    <div id="screen-appointment" class="screen">
+      <div class="header with-back">
+        <span class="back-link" data-back="profile">← Volver</span>
+        <div class="header-inner">
+          <div class="logo-text">Mental Ease</div>
+          <div class="avatar" id="avatar-app">ME</div>
+        </div>
+        <div class="header-title">Agendar cita</div>
+      </div>
+      <main>
+        <div class="card">
+          <h1>Nueva cita</h1>
+          <p>Selecciona la fecha y hora para tu cita.</p>
+          <div class="input-group">
+            <label>Profesional</label>
+            <select id="app-professional">
+              <option value="Valentina Mejía">Valentina Mejía</option>
+              <option value="Carlos Pérez">Carlos Pérez</option>
+              <option value="Otro profesional">Otro profesional</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Fecha</label>
+            <input id="app-date" type="date" />
+          </div>
+          <div class="input-group">
+            <label>Hora</label>
+            <select id="app-time">
+              <option value="10:00">10:00</option>
+              <option value="11:00">11:00</option>
+              <option value="12:00">12:00</option>
+            </select>
+          </div>
+          <button id="btn-save-app" class="btn full">Confirmar cita</button>
+          <p id="app-msg" class="center" style="margin-top:8px;font-size:13px;"></p>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // ---------- STATE & HELPERS ----------
+    const screens = document.querySelectorAll(".screen");
+    const avatarIds = [
+      "avatar-initials",
+      "avatar-ml",
+      "avatar-mh",
+      "avatar-lib",
+      "avatar-com",
+      "avatar-rec",
+      "avatar-app",
+    ];
+
+    function showScreen(id) {
+      screens.forEach((s) => s.classList.remove("active"));
+      document.getElementById("screen-" + id).classList.add("active");
+    }
+
+    function getUsers() {
+      return JSON.parse(localStorage.getItem("me_users") || "[]");
+    }
+
+    function saveUsers(users) {
+      localStorage.setItem("me_users", JSON.stringify(users));
+    }
+
+    function getCurrentUser() {
+      const email = localStorage.getItem("me_currentUser");
+      if (!email) return null;
+      return getUsers().find((u) => u.email === email) || null;
+    }
+
+    function setCurrentUser(email) {
+      if (email) localStorage.setItem("me_currentUser", email);
+      else localStorage.removeItem("me_currentUser");
+    }
+
+    function getMoods() {
+      return JSON.parse(localStorage.getItem("me_moods") || "[]");
+    }
+
+    function saveMoods(moods) {
+      localStorage.setItem("me_moods", JSON.stringify(moods));
+    }
+
+    // ---------- HOME ----------
+    const cbTyc = document.getElementById("cb-tyc");
+    const btnComenzar = document.getElementById("btn-comenzar");
+    cbTyc.addEventListener("change", () => {
+      btnComenzar.disabled = !cbTyc.checked;
+    });
+    btnComenzar.addEventListener("click", () => showScreen("options"));
+
+    // ---------- OPTIONS ----------
+    document
+      .getElementById("btn-go-signup")
+      .addEventListener("click", () => showScreen("signup"));
+    document
+      .getElementById("btn-go-login")
+      .addEventListener("click", () => showScreen("login"));
+
+    // ---------- SIGNUP ----------
+    document.getElementById("btn-signup").addEventListener("click", () => {
+      const name = document.getElementById("su-name").value.trim();
+      const email = document.getElementById("su-email").value.trim();
+      const gender = document.getElementById("su-gender").value;
+      const age = document.getElementById("su-age").value;
+      const password = document.getElementById("su-password").value;
+      const msg = document.getElementById("su-msg");
+
+      if (!name || !email || !gender || !age || !password) {
+        msg.textContent = "Por favor completa todos los campos.";
+        msg.style.color = "red";
+        return;
+      }
+
+      let users = getUsers();
+      if (users.some((u) => u.email === email)) {
+        msg.textContent = "Ya existe un usuario con ese correo.";
+        msg.style.color = "red";
+        return;
+      }
+
+      users.push({ name, email, gender, age, password });
+      saveUsers(users);
+      setCurrentUser(email);
+      msg.textContent = "Perfil creado correctamente.";
+      msg.style.color = "green";
+      loadProfile();
+      showScreen("profile");
+    });
+
+    // ---------- LOGIN ----------
+    document.getElementById("btn-login").addEventListener("click", () => {
+      const email = document.getElementById("li-email").value.trim();
+      const password = document.getElementById("li-password").value;
+      const msg = document.getElementById("li-msg");
+      const user = getUsers().find((u) => u.email === email);
+
+      if (!user || user.password !== password) {
+        msg.textContent = "Correo o contraseña incorrectos.";
+        msg.style.color = "red";
+        return;
+      }
+
+      setCurrentUser(email);
+      msg.textContent = "";
+      loadProfile();
+      showScreen("profile");
+    });
+
+    // ---------- PERFIL ----------
+    function setAvatarInitials(initials) {
+      avatarIds.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = initials;
+      });
+    }
+
+    function loadProfile() {
+      const user = getCurrentUser();
+      if (!user) return;
+      document.getElementById("profile-name").textContent = user.name;
+      document.getElementById("profile-email").textContent = user.email;
+      document.getElementById(
+        "profile-meta"
+      ).textContent = `${user.gender} — ${user.age} años`;
+      document.getElementById(
+        "profile-header-text"
+      ).textContent = `Hola, ${user.name.split(" ")[0]} 👋`;
+      const initials = user.name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase();
+      setAvatarInitials(initials);
+    }
+
+    document.getElementById("btn-logout").addEventListener("click", () => {
+      setCurrentUser(null);
+      showScreen("home");
+    });
+
+    document
+      .getElementById("btn-go-mood-log")
+      .addEventListener("click", () => showScreen("mood-log"));
+    document
+      .getElementById("btn-go-mood-history")
+      .addEventListener("click", () => {
+        renderMoodHistory();
+        showScreen("mood-history");
+      });
+    document
+      .getElementById("btn-go-library")
+      .addEventListener("click", () => showScreen("library"));
+    document
+      .getElementById("btn-go-community")
+      .addEventListener("click", () => showScreen("community"));
+    document
+      .getElementById("btn-go-recommendations")
+      .addEventListener("click", () => {
+        updateRecommendationsMood();
+        showScreen("recommendations");
+      });
+    document
+      .getElementById("btn-go-appointment")
+      .addEventListener("click", () => showScreen("appointment"));
+
+    // ---------- REGISTRO EMOCIONAL ----------
+    let selectedMood = null;
+    document
+      .querySelectorAll("#screen-mood-log .btn.small.secondary")
+      .forEach((btn) => {
+        btn.addEventListener("click", () => {
+          selectedMood = btn.dataset.mood;
+          document.getElementById(
+            "mood-selected"
+          ).innerHTML = `Estado seleccionado: <strong>${selectedMood}</strong>`;
+        });
+      });
+
+    document.getElementById("btn-save-mood").addEventListener("click", () => {
+      const msg = document.getElementById("mood-msg");
+      if (!selectedMood) {
+        msg.textContent = "Primero selecciona un estado.";
+        msg.style.color = "red";
+        return;
+      }
+      const now = new Date();
+      const date = now.toLocaleDateString("es-CO", {
+        day: "2-digit",
+        month: "short",
+      });
+      let moods = getMoods();
+      moods.unshift({ date, mood: selectedMood });
+      saveMoods(moods);
+      msg.textContent = "Registro guardado.";
+      msg.style.color = "green";
+      selectedMood = null;
+      document.getElementById(
+        "mood-selected"
+      ).innerHTML = `Estado seleccionado: <strong>Ninguno</strong>`;
+    });
+
+    // ---------- HISTORIAL EMOCIONAL ----------
+    function renderMoodHistory() {
+      const list = document.getElementById("mood-list");
+      const empty = document.getElementById("mood-empty");
+      list.innerHTML = "";
+      const moods = getMoods();
+      if (!moods.length) {
+        empty.style.display = "block";
+        return;
+      }
+      empty.style.display = "none";
+      moods.forEach((m) => {
+        const row = document.createElement("div");
+        row.className = "mood-row";
+        row.innerHTML = `
+          <div class="mood-main">
+            <span class="mood-date">${m.date}</span>
+            <span>${m.mood}</span>
+          </div>
+          <span class="mood-emoji">${
+            m.mood === "Muy bien"
+              ? "😄"
+              : m.mood === "Bien"
+              ? "🙂"
+              : m.mood === "Regular"
+              ? "😐"
+              : m.mood === "Triste"
+              ? "😔"
+              : "😰"
+          }</span>
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    // ---------- RECOMENDACIONES ----------
+    function updateRecommendationsMood() {
+      const moods = getMoods();
+      if (!moods.length) return;
+      const last = moods[0];
+      document.getElementById("rec-mood-text").textContent = last.mood;
+      let emoji = "😐";
+      if (last.mood === "Muy bien") emoji = "😄";
+      else if (last.mood === "Bien") emoji = "🙂";
+      else if (last.mood === "Triste") emoji = "😔";
+      else if (last.mood === "Ansioso") emoji = "😰";
+      document.getElementById("rec-mood-emoji").textContent = emoji;
+    }
+
+    document
+      .getElementById("btn-rec-library")
+      .addEventListener("click", () => showScreen("library"));
+
+    // ---------- AGENDAR CITA ----------
+    document.getElementById("btn-save-app").addEventListener("click", () => {
+      const prof = document.getElementById("app-professional").value;
+      const date = document.getElementById("app-date").value;
+      const time = document.getElementById("app-time").value;
+      const msg = document.getElementById("app-msg");
+
+      if (!date || !time) {
+        msg.textContent = "Selecciona fecha y hora.";
+        msg.style.color = "red";
+        return;
+      }
+
+      msg.textContent = `Cita agendada con ${prof} el ${date} a las ${time}.`;
+      msg.style.color = "green";
+    });
+
+    // ---------- NAVEGACIÓN VOLVER ----------
+    document.querySelectorAll(".back-link").forEach((el) => {
+      el.addEventListener("click", () => {
+        const dest = el.dataset.back;
+        if (dest === "profile") {
+          loadProfile();
+        }
+        showScreen(dest);
+      });
+    });
+
+    // ---------- INIT ----------
+    window.addEventListener("load", () => {
+      const user = getCurrentUser();
+      if (user) {
+        loadProfile();
+        showScreen("profile");
+      } else {
+        showScreen("home");
+      }
+    });
+  </script>
+</body>
+</html>
